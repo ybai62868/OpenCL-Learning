@@ -2,9 +2,14 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-08-09 13:33:02
- * @LastEditTime: 2019-08-09 14:16:20
+ * @LastEditTime: 2019-08-12 17:48:47
  * @LastEditors: Please set LastEditors
  */
+/*
+    Yang.Bai
+    yb269@cornell.edu
+ */
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,18 +34,34 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Simple compute kernel which computes two vector addition
+// const char * KernelVecAdd = "\n" \
+// "__kernel void vecadd(                                                  \n" \
+// "   __global float* input1,                                             \n" \
+// "   __global float* input2,                                             \n" \
+// "   __global float* output,                                             \n" \
+// "   const unsigned int count)                                           \n" \
+// "{                                                                      \n" \
+// "   int i = get_global_id(0);                                           \n" \
+// "   if(i < count)                                                       \n" \
+// "       output[i] = input1[i] + input2[i];                              \n" \
+// "}                                                                      \n" \
+// "\n";
+
+
 const char * KernelVecAdd = "\n" \
-"__kernel void vecadd(                                                       \n" \
-"   __global float* input1,                                              \n" \
-"   __global float* input2,                                              \n" \
+"__kernel void vecadd(                                                  \n" \
+"   __global float* input1,                                             \n" \
+"   __global float* input2,                                             \n" \
 "   __global float* output,                                             \n" \
 "   const unsigned int count)                                           \n" \
 "{                                                                      \n" \
-"   int i = get_global_id(0);                                           \n" \
+"   for (int i = 0;i < 1024;i++ )                                       \n" \
 "   if(i < count)                                                       \n" \
-"       output[i] = input1[i] + input2[i];                                \n" \
+"       output[i] = input1[i] + input2[i];                              \n" \
 "}                                                                      \n" \
 "\n";
+
+
 
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,15 +84,14 @@ int main(int argc, char** argv)
     cl_program program;                 // compute program
     cl_kernel kernel;                   // compute kernel
     
-    cl_mem input1;                       // device memory used for the input array
+    cl_mem input1;                      // device memory used for the input array
     cl_mem input2;
     cl_mem output;                      // device memory used for the output array
     
     // Fill our data set with random float values
     //
-    int i = 0;
     unsigned int count = DATA_SIZE;
-    for(i = 0; i < count; i++) {
+    for(int i = 0; i < count; i++) {
         data1[i] = rand() / (float)RAND_MAX;
         data2[i] = rand() / (float)RAND_MAX;
     }
@@ -95,7 +115,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
  
-    // Create a command commands
+    // Create a In-order command commands
     //
     commands = clCreateCommandQueue(context, device_id, 0, &err);
     if (!commands)
@@ -105,14 +125,7 @@ int main(int argc, char** argv)
     }
  
     // Create the compute program from the source buffer
-    //
-    // program = clCreateProgramWithSource(context, 1, (const char **) & KernelSource, NULL, &err);
-    // if (!program)
-    // {
-    //     printf("Error: Failed to create compute program!\n");
-    //     return EXIT_FAILURE;
-    // }
-    
+    //    
     program = clCreateProgramWithSource(context, 1, (const char **) & KernelVecAdd, NULL, &err);
     if (!program)
     {
@@ -135,12 +148,6 @@ int main(int argc, char** argv)
  
     // Create the compute kernel in the program we wish to run
     //
-    // kernel = clCreateKernel(program, "square", &err);
-    // if (!kernel || err != CL_SUCCESS)
-    // {
-    //     printf("Error: Failed to create compute kernel!\n");
-    //     exit(1);
-    // }
     kernel = clCreateKernel(program, "vecadd", &err);
     if (!kernel || err != CL_SUCCESS)
     {
@@ -223,12 +230,7 @@ int main(int argc, char** argv)
     // Validate our results
     //
     correct = 0;
-    // for(i = 0; i < count; i++)
-    // {
-    //     if(results[i] == data[i] * data[i])
-    //         correct++;
-    // }
-    for (i = 0;i < count; i++) {
+    for (int i = 0;i < count;i++) {
         if (results[i] == data1[i] + data2[i]) {
             correct++;
         } else {
@@ -239,7 +241,7 @@ int main(int argc, char** argv)
 
     // Print a brief summary detailing the results
     //
-    printf("Computed '%d/%d' correct values!\n", correct, count);
+    printf("Successfully, computed '%d/%d' correct values!\n", correct, count);
     
     // Shutdown and cleanup
     //
