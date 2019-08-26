@@ -73,7 +73,55 @@ int main(int argc, char* argv[1])
 		std::cout << "Test faild" << std::endl;
 		exit(1);
 	}
-	
+
+
+	// Getting ACCELERATOR Devices and selecting 1st such device
+	cl_device_id devices[16];
+	char cl_device_name[1001];
+
+	err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ACCELERATOR,
+		1, devices, &num_devices);
+	printf("INFO: Found %d devices\n", num_devices);
+
+	// iterate all devices to selecet the target device.
+	for (int i = 0; i < num_devices; i++) {
+		err = clGetDeviceInfo(devices[i], CL_DEVICE_NAME, 1024, cl_device_name, 0);
+		std::cout << "CL_DEVICE_NAME" << cl_device_name << std::cout;
+	}
+
+	// Creating Context and Command Queue for selected Device
+	context = clCreateContext(0, 1, &device_id, NULL, NULL, &err);
+	if (!context) {
+		std::cout << "Error: Faild to create a compute context!" << std::endl;
+		exit(1);
+	}
+
+	// Create a In-order Command Queue
+	commands = clCreateCommandQueue(context, device_id, 0, &err);
+
+	// Create the compute program from the Binary file
+	unsigned char *kernelbinary;
+	char *xclbin = argv[1];
+	std::cout << "INFO: loading xclbin" << xclbin;
+
+	int size = load_file_to_memory(xclbin, (char**) &kernelbinary);
+	size_t size_var = size;
+	cl_program program = clCreateProgramWithBinary(context, 1, &device_id, 
+												&size_var, (const unsigned char **) &kernelbinary,
+												&status, &err);
+	// Function 
+	int load_file_to_memory(const char *filename, char **result)
+
+
+
+
+	// Create Buffers inside Device
+	cl_mem buffer_a = clCreateBuffer(context, CL_MEM_WRITE, size, &host_)
+	cl_mem buffer_b = 
+	cl_mem buffer_c = 
+
+
+
 
 // OPENCL HOST CODE AREA END
 
@@ -90,6 +138,15 @@ int main(int argc, char* argv[1])
 			std::cout << "Result Match: i = " << i << "CPU result = " << result_sim[i] << "Krnl Result =" << result_krnl[i] << std::endl;
 		}
 	}
+
+
+	//Shutdown and cleanup
+	clReleaseMemObject();
+	clReleaseCommandQueue();
+	clReleaseContext();
+	clReleaseKernel();
+	clReleaseProgram();
+
 
 	if (krnl_match) {
 		return 1;
