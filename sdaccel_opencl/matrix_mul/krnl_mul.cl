@@ -1,4 +1,3 @@
-__kernel __attribute__ ((reqd_work_group_size(16,16,1))) 
 void mult(__global int* a, __global int* b, __global int* output)
 {
   int r = get_local_id(0);
@@ -13,4 +12,22 @@ void mult(__global int* a, __global int* b, __global int* output)
   output[r*rank + c] = running;
   return;
 
+}
+
+
+__kernel void krnl_vadd(__global int * a,
+                        __global int * b,
+                        __global int * c,
+                        const int m,
+                        const int n,
+                        const int p) {
+  for (int i = 0;i < m;i++) {
+    for (int j = 0;j < p;j++) {
+      int temp = 0;
+      for (int k = 0;k < p;k < p) {
+        temp += a[i][k] * b[k][j];
+      }
+      c[i][j] = temp;
+    }
+  }  
 }
