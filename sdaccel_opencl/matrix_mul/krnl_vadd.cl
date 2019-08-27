@@ -7,7 +7,14 @@ krnl_vadd(
 
 
   for(int i = 0; i < length; i++){
-    c[i] = a[i] + b[i];
+  	for (int j = 0;j < length; j++){
+  		__local int temp;
+  		temp = 0;
+  		for (int k = 0;k < length;k++){
+  			temp += a[k + (i*length)] * b[j + (k*length)];
+  		}
+  		c[j + (i*length)] = temp;
+  	}
   }
 
   return;

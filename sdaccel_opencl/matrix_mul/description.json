@@ -1,0 +1,63 @@
+[
+{
+    "example": "Vector Addition",
+    "overview": "This is a simple example of vector addition.\r\n\nThe purpose of this code is to introduce the user to application development in SDx.",
+    "os": [
+        "Linux"
+    ],
+    "runtime": [
+        "OpenCL"
+    ],
+    "cmd_args" : "BUILD/default.xclbin",
+    "accelerators": [
+        {
+            "name": "krnl_vadd",
+            "location": "krnl_vadd.cl"
+        }
+    ],
+    "contributors" : [
+        {
+            "group" : "Xilinx, Inc.",
+            "url" : "http://www.xilinx.com"
+        }
+    ],
+    "revision" : [
+        {
+            "date" : "2017",
+            "version" : "1.0",
+            "description" : "Initial revision"
+        }
+    ]
+},
+{
+    "example": "Vector Addition",
+    "overview": "This is a simple example of vector addition.\r\n\nThe purpose of this code is to introduce the user to application development in SDx.",
+    "os": [
+        "Linux"
+    ],
+    "runtime": [
+        "OpenCL"
+    ],
+    "board" : [ "zcu102_es1_ocl", "zcu102_es2_ocl" ],
+    "cmd_args" : "BUILD/default.xclbin",
+    "accelerators": [
+        {
+            "name": "krnl_vadd",
+            "location": "krnl_vadd.cl"
+        }
+    ],
+    "contributors" : [
+        {
+            "group" : "Xilinx, Inc.",
+            "url" : "http://www.xilinx.com"
+        }
+    ],
+    "revision" : [
+        {
+            "date" : "2017",
+            "version" : "1.0",
+            "description" : "Initial revision"
+        }
+    ]
+}
+]
